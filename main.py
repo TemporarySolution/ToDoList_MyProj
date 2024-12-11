@@ -6,7 +6,7 @@ from main_panel import Ui_MainWindow as MainPanelUI
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        # Инициализация текущего профиля
+        # Инициализация текущего профиля Test
         self.current_profile = None
         self.available_profiles = ["profile_1", "profile_2", "profile_3", "profile_4"]
 
