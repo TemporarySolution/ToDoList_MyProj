@@ -1,12 +1,14 @@
 import sys
 import sqlite3
+
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QInputDialog, QListWidgetItem, QPushButton, QFileDialog
 from PyQt6.QtGui import  QPixmap
-
 
 from choise_profile import Ui_MainWindow as ChoiseProfileUI
 from main_panel import Ui_MainWindow as MainPanelUI
 from editing_tasks_panel import Ui_MainWindow as EditingPanelUI
+
+
 ###
 class MainWindow(QMainWindow):
     def __init__(self):
