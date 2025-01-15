@@ -2,7 +2,6 @@ import sys
 import sqlite3
 from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QInputDialog, QListWidgetItem, QPushButton, QFileDialog
 from PyQt6.QtGui import  QPixmap
-from PyQt6.QtCore import Qt
 
 
 from choise_profile import Ui_MainWindow as ChoiseProfileUI

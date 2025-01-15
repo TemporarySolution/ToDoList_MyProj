@@ -79,19 +79,6 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QPushButton" name="add_complete">
-       <property name="font">
-        <font>
-         <family>Times New Roman</family>
-         <pointsize>14</pointsize>
-        </font>
-       </property>
-       <property name="text">
-        <string>Выполнить задание</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="add_task">
        <property name="font">
         <font>
@@ -100,7 +87,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Добавить задание</string>
+        <string>Выполнить задание</string>
        </property>
       </widget>
      </item>
