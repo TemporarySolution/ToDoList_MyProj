@@ -1,6 +1,10 @@
 import sys
 import sqlite3
-from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QInputDialog
+from PyQt6.QtWidgets import QApplication, QMainWindow, QMessageBox, QInputDialog, QListWidgetItem, QPushButton, QFileDialog
+from PyQt6.QtGui import  QPixmap
+from PyQt6.QtCore import Qt
+
+
 from choise_profile import Ui_MainWindow as ChoiseProfileUI
 from main_panel import Ui_MainWindow as MainPanelUI
 from editing_tasks_panel import Ui_MainWindow as EditingPanelUI
@@ -171,6 +175,7 @@ class MainWindow(QMainWindow):
         # Подключение кнопок на главной панели
         self.main_panel_ui.button_change_profile.clicked.connect(self.return_to_choise_profile)
         self.main_panel_ui.button_create_new_folder.clicked.connect(self.open_editing_panel)
+        self.main_panel_ui.searchButton.clicked.connect(self.search_tasks)
 
     def return_to_choise_profile(self):
         """Возврат на экран выбора профиля"""
@@ -188,11 +193,13 @@ class MainWindow(QMainWindow):
         self.editing_panel_ui.delete_task.clicked.connect(self.delete_task)
 
         self.editing_panel_ui.add_task.clicked.connect(self.add_task)
-        ###self.editing_panel_ui.save_task_change.clicked.connect(self.edit_task)
+        self.editing_panel_ui.save_task_change.clicked.connect(self.edit_task)
         ###self.editing_panel_ui.edit_task.clicked.connect(self.edit_task)
-        self.editing_panel_ui.back_to_group_tasks.clicked.connect(self.return_to_group_tasks)
+        ###self.editing_panel_ui.back_to_group_tasks.clicked.connect(self.return_to_group_tasks)
         self.editing_panel_ui.back_to_main_panel.clicked.connect(self.return_to_main_panel)
         self.editing_panel_ui.delete_task.clicked.connect(self.delete_task)
+        self.editing_panel_ui.add_complete.clicked.connect(self.delete_task)
+        self.editing_panel_ui.pushButton.clicked.connect(self.select_task_picture)
 
     def return_to_group_tasks(self):
         """Возврат к экрану групп задач"""
@@ -207,14 +214,7 @@ class MainWindow(QMainWindow):
 
     def return_to_main_panel(self):
         """Возврат на главную панель приложения"""
-        result = QMessageBox.question(
-            self,
-            "Возврат на главную панель",
-            "Вы уверены, что хотите вернуться на главную панель?",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-        )
-        if result == QMessageBox.StandardButton.Yes:
-            self.open_main_panel()
+        self.open_main_panel()
 
     """def delete_task(self):
         ###Удаление задачи###
@@ -238,14 +238,72 @@ class MainWindow(QMainWindow):
         self.editing_panel_ui.name_of_task.clear()
         self.editing_panel_ui.deadline_of_task.clear()
         self.editing_panel_ui.text_of_task.clear()
-        self.editing_panel_ui.name_of_folder_with_task.clear()
-        self.editing_panel_ui.name_of_project.clear()
-        self.editing_panel_ui.tag_of_task.clear()
-        self.editing_panel_ui.tag_of_project.clear()
+        #self.editing_panel_ui.name_of_folder_with_task.clear()
+
 
     ################################
     ####### Добавление задач #######
     ################################
+
+    def search_tasks(self):
+        connection = sqlite3.connect(self.task_database)
+        cursor = connection.cursor()
+
+        try:
+            # Поиск задач, связанных с текущим профилем
+            query = """
+                SELECT id, name, deadline, description 
+                FROM tasks 
+                WHERE profile_name = ? AND (name LIKE ? OR description LIKE ?)
+            """
+            cursor.execute(query, (self.current_profile, f"%{self.main_panel_ui.Title.text()}%", f"%{self.main_panel_ui.Title.text()}%"))
+            results = cursor.fetchall()
+
+            # Очистка listWidget перед выводом новых результатов
+            self.main_panel_ui.listWidget.clear()
+
+            if results:
+                # Добавление результатов поиска в виде кнопок в listWidget
+                for task_id, task_name, deadline, description in results:
+                    task_button = QPushButton(task_name, self)
+                    task_button.clicked.connect(lambda _, t_id=task_id: self.open_editing_panel_with_task(t_id))
+
+                    # Добавление кнопки в listWidget
+                    item = QListWidgetItem()
+                    self.main_panel_ui.listWidget.addItem(item)
+                    self.main_panel_ui.listWidget.setItemWidget(item, task_button)
+            else:
+                QMessageBox.information(self, "Результаты поиска", "Задачи не найдены.")
+        finally:
+            connection.close()
+
+    def open_editing_panel_with_task(self, task_id):
+        """Открытие панели редактирования задачи с предзаполненными данными."""
+        self.editing_panel_ui = EditingPanelUI()
+        self.editing_panel_ui.setupUi(self)
+
+        # Подключение кнопок на панели редактирования
+        self.editing_panel_ui.add_complete.clicked.connect(self.delete_task)
+        #self.editing_panel_ui.back_to_group_tasks.clicked.connect(self.return_to_group_tasks)
+        self.editing_panel_ui.back_to_main_panel.clicked.connect(self.return_to_main_panel)
+        self.editing_panel_ui.save_task_change.clicked.connect(self.edit_task)
+        self.editing_panel_ui.delete_task.clicked.connect(self.delete_task)
+        self.editing_panel_ui.pushButton.clicked.connect(self.select_task_picture)
+
+
+        # Загрузка данных задачи в поля редактирования
+        connection = sqlite3.connect(self.task_database)
+        cursor = connection.cursor()
+
+        try:
+            cursor.execute("SELECT name, deadline, description FROM tasks WHERE id = ?", (task_id,))
+            task = cursor.fetchone()
+            if task:
+                self.editing_panel_ui.name_of_task.setPlainText(task[0])
+                self.editing_panel_ui.deadline_of_task.setPlainText(task[1])
+                self.editing_panel_ui.text_of_task.setPlainText(task[2])
+        finally:
+            connection.close()
 
     def init_tasks_table(self):
         """Создание таблицы задач, если её нет"""
@@ -293,6 +351,7 @@ class MainWindow(QMainWindow):
             connection.commit()
             QMessageBox.information(self, "Успех", f"Задача '{task_name}' добавлена.")
             self.clear_task_data()
+            self.return_to_main_panel()
         except sqlite3.IntegrityError:
             QMessageBox.warning(self, "Ошибка", "Произошла ошибка при добавлении задачи.")
         finally:
@@ -326,11 +385,6 @@ class MainWindow(QMainWindow):
             connection.close()
 
     def delete_task(self):
-        """Удаление задачи"""
-        if not self.current_profile:
-            QMessageBox.warning(self, "Ошибка", "Сначала выберите профиль.")
-            return
-
         task_name = self.editing_panel_ui.name_of_task.toPlainText().strip()
 
         if not task_name:
@@ -357,6 +411,7 @@ class MainWindow(QMainWindow):
             connection.commit()
             QMessageBox.information(self, "Успех", f"Задача '{task_name}' удалена.")
             self.clear_task_data()
+            self.return_to_main_panel()
         finally:
             connection.close()
 
@@ -422,6 +477,29 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Вход", f"Вы вошли в профиль {self.current_profile}.")
         else:
             QMessageBox.warning(self, "Ошибка", "Сначала выберите профиль.")
+
+    def select_task_picture(self):
+        """Позволяет пользователю выбрать изображение и отображает его в task_picture."""
+        # Открытие диалога выбора файла
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Выберите изображение",
+            "",
+            "Изображения (*.png *.jpg *.jpeg *.bmp *.gif)"
+        )
+
+        # Если пользователь выбрал файл
+        if file_path:
+            pixmap = QPixmap(file_path)
+
+            # Проверка: изображение должно соответствовать размеру task_picture
+            if self.editing_panel_ui.task_picture.size().isValid():
+                pixmap = pixmap.scaled(
+                    self.editing_panel_ui.task_picture.size()
+                )
+
+            # Установка изображения в QLabel
+            self.editing_panel_ui.task_picture.setPixmap(pixmap)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -42,6 +42,13 @@ class Ui_MainWindow(object):
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setSpacing(6)
         self.verticalLayout.setObjectName("verticalLayout")
+        self.add_complete = QtWidgets.QPushButton(parent=self.verticalLayoutWidget)
+        font = QtGui.QFont()
+        font.setFamily("Times New Roman")
+        font.setPointSize(14)
+        self.add_complete.setFont(font)
+        self.add_complete.setObjectName("add_complete")
+        self.verticalLayout.addWidget(self.add_complete)
         self.add_task = QtWidgets.QPushButton(parent=self.verticalLayoutWidget)
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
@@ -56,13 +63,6 @@ class Ui_MainWindow(object):
         self.save_task_change.setFont(font)
         self.save_task_change.setObjectName("save_task_change")
         self.verticalLayout.addWidget(self.save_task_change)
-        self.back_to_group_tasks = QtWidgets.QPushButton(parent=self.verticalLayoutWidget)
-        font = QtGui.QFont()
-        font.setFamily("Times New Roman")
-        font.setPointSize(14)
-        self.back_to_group_tasks.setFont(font)
-        self.back_to_group_tasks.setObjectName("back_to_group_tasks")
-        self.verticalLayout.addWidget(self.back_to_group_tasks)
         self.back_to_main_panel = QtWidgets.QPushButton(parent=self.verticalLayoutWidget)
         font = QtGui.QFont()
         font.setFamily("Times New Roman")
@@ -96,21 +96,16 @@ class Ui_MainWindow(object):
         self.name_of_task = QtWidgets.QTextEdit(parent=self.centralwidget)
         self.name_of_task.setGeometry(QtCore.QRect(40, 300, 421, 31))
         self.name_of_task.setObjectName("name_of_task")
-        self.name_of_folder_with_task = QtWidgets.QTextBrowser(parent=self.centralwidget)
-        self.name_of_folder_with_task.setGeometry(QtCore.QRect(40, 250, 421, 31))
-        self.name_of_folder_with_task.setObjectName("name_of_folder_with_task")
-        self.name_of_project = QtWidgets.QTextBrowser(parent=self.centralwidget)
-        self.name_of_project.setGeometry(QtCore.QRect(40, 200, 421, 31))
-        self.name_of_project.setObjectName("name_of_project")
-        self.tag_of_task = QtWidgets.QTextBrowser(parent=self.centralwidget)
-        self.tag_of_task.setGeometry(QtCore.QRect(40, 110, 421, 31))
-        self.tag_of_task.setObjectName("tag_of_task")
         self.name_profile = QtWidgets.QLabel(parent=self.centralwidget)
         self.name_profile.setGeometry(QtCore.QRect(50, 70, 151, 16))
         self.name_profile.setObjectName("name_profile")
-        self.tag_of_project = QtWidgets.QTextBrowser(parent=self.centralwidget)
-        self.tag_of_project.setGeometry(QtCore.QRect(40, 150, 421, 31))
-        self.tag_of_project.setObjectName("tag_of_project")
+        self.task_picture = QtWidgets.QLabel(parent=self.centralwidget)
+        self.task_picture.setGeometry(QtCore.QRect(150, 100, 180, 180))
+        self.task_picture.setText("")
+        self.task_picture.setObjectName("task_picture")
+        self.pushButton = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.pushButton.setGeometry(QtCore.QRect(150, 100, 180, 180))
+        self.pushButton.setObjectName("pushButton")
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -121,9 +116,9 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "To Do List editing task"))
         self.ToDoList.setText(_translate("MainWindow", "To Do List"))
         self.today_date.setText(_translate("MainWindow", "Дата ДД/ММММ/ГГГГ"))
+        self.add_complete.setText(_translate("MainWindow", "Выполнить задание"))
         self.add_task.setText(_translate("MainWindow", "Добавить задание"))
         self.save_task_change.setText(_translate("MainWindow", "Сохранить изменения"))
-        self.back_to_group_tasks.setText(_translate("MainWindow", "Вернуться к группам задач"))
         self.back_to_main_panel.setText(_translate("MainWindow", "Вернуться на главную панель"))
         self.delete_task.setText(_translate("MainWindow", "Удалить задачу"))
         self.text_of_task.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
@@ -142,24 +137,5 @@ class Ui_MainWindow(object):
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Название задачи</p></body></html>"))
-        self.name_of_folder_with_task.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Название папки с задачей</p></body></html>"))
-        self.name_of_project.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">&quot;Название проекта&quot;</p></body></html>"))
-        self.tag_of_task.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Тэг задачи</p></body></html>"))
         self.name_profile.setText(_translate("MainWindow", "Имя профиля"))
-        self.tag_of_project.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Тэг проекта</p></body></html>"))
+        self.pushButton.setText(_translate("MainWindow", "PushButton"))
